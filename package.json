@@ -1,0 +1,39 @@
+{
+  "name": "@apexxcloud/react",
+  "version": "1.0.0",
+  "description": "React components for ApexxCloud Storage Service",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@apexxcloud/sdk-js": "^1.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.3.18",
+    "rollup": "^2.79.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "react",
+    "apexxcloud",
+    "storage",
+    "upload"
+  ],
+  "author": "ApexxCloud <team@apexxcloud.com>",
+  "license": "MIT"
+}
