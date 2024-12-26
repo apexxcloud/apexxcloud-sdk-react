@@ -1,0 +1,49 @@
+.container {
+  @apply apexx-w-full apexx-max-w-2xl apexx-mx-auto;
+}
+
+.dropzone {
+  @apply apexx-p-6 apexx-border-2 apexx-border-dashed apexx-rounded-lg apexx-transition-colors apexx-duration-200;
+}
+
+.dropzoneActive {
+  @apply apexx-border-blue-500 apexx-bg-blue-50;
+}
+
+.dropzoneInactive {
+  @apply apexx-border-gray-300 apexx-bg-white;
+}
+
+.uploadProgress {
+  @apply apexx-space-y-4;
+}
+
+.progressBar {
+  @apply apexx-relative apexx-w-full apexx-h-2 apexx-bg-gray-200 apexx-rounded-full apexx-overflow-hidden;
+}
+
+.progressFill {
+  @apply apexx-absolute apexx-top-0 apexx-left-0 apexx-h-full apexx-bg-blue-500 apexx-transition-all apexx-duration-300;
+}
+
+.uploadContent {
+  @apply apexx-text-center apexx-space-y-4;
+}
+
+.iconContainer {
+  @apply apexx-flex apexx-justify-center;
+}
+
+.icon {
+  @apply apexx-w-12 apexx-h-12 apexx-transition-colors apexx-duration-200;
+}
+
+.errorContainer {
+  @apply apexx-mt-4 apexx-p-3 apexx-bg-red-50 apexx-rounded-md;
+}
+
+.errorText {
+  @apply apexx-text-sm apexx-text-red-600;
+}
+
+/* Add any additional custom styles that can't be handled by Tailwind utilities */

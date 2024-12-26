@@ -1,6 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
+import postcss from "rollup-plugin-postcss";
 
 export default {
   input: "src/index.ts",
@@ -16,6 +17,25 @@ export default {
       sourcemap: true,
     },
   ],
-  external: ["react", "react-dom", "@apexxcloud/sdk-js"],
-  plugins: [resolve(), commonjs(), typescript()],
+  external: [
+    "react",
+    "react-dom",
+    "react-dropzone",
+    "@apexxcloud/sdk-js",
+    "clsx",
+  ],
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript(),
+    postcss({
+      config: {
+        path: "./postcss.config.js",
+      },
+      modules: true,
+      extensions: [".css"],
+      minimize: true,
+      extract: "styles.css",
+    }),
+  ],
 };

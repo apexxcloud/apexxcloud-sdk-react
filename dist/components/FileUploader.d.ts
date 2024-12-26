@@ -1,9 +1,13 @@
 import React from "react";
+import { GetSignedUrlFn } from "@apexxcloud/sdk-js";
 interface FileUploaderProps {
-    getSignedUrl: (file: File) => Promise<string>;
+    getSignedUrl: GetSignedUrlFn;
     onUploadComplete?: (response: any) => void;
     onUploadError?: (error: Error) => void;
-    onUploadProgress?: (progress: number) => void;
+    multipart?: boolean;
+    accept?: Record<string, string[]>;
+    maxSize?: number;
+    className?: string;
 }
 export declare const FileUploader: React.FC<FileUploaderProps>;
 export {};

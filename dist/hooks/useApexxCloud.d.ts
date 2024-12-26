@@ -1,9 +1,5 @@
-interface UploadOptions {
-    onProgress?: (progress: number) => void;
-    onComplete?: (response: any) => void;
-    onError?: (error: Error) => void;
-}
+import { GetSignedUrlFn, UploadOptions, MultipartUploadOptions } from '@apexxcloud/sdk-js';
 export declare function useApexxCloud(): {
-    upload: (signedUrl: string, file: File, options?: UploadOptions) => Promise<any>;
+    upload: (getSignedUrl: GetSignedUrlFn, file: File, options?: UploadOptions) => Promise<any>;
+    uploadMultipart: (getSignedUrl: GetSignedUrlFn, file: File, options?: MultipartUploadOptions) => Promise<any>;
 };
-export {};

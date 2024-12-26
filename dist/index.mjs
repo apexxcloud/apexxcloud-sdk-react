@@ -1,24 +1,22 @@
 import React, { useRef, useCallback, useState } from 'react';
-import StorageSDK from '@apexxcloud/sdk-js';
+import ApexxCloud from '@apexxcloud/sdk-js';
+import { useDropzone } from 'react-dropzone';
+import clsx from 'clsx';
 
 function useApexxCloud() {
-    const sdkRef = useRef(new StorageSDK());
-    const upload = useCallback(async (signedUrl, file, options = {}) => {
+    const sdkRef = useRef(new ApexxCloud());
+    const upload = useCallback(async (getSignedUrl, file, options = {}) => {
         try {
-            const result = await sdkRef.current.files.upload(signedUrl, file, {
-                onProgress: (event) => {
-                    var _a;
-                    (_a = options.onProgress) === null || _a === void 0 ? void 0 : _a.call(options, event.progress);
-                },
-                onComplete: (event) => {
-                    var _a;
-                    (_a = options.onComplete) === null || _a === void 0 ? void 0 : _a.call(options, event.response);
-                },
-                onError: (event) => {
-                    var _a;
-                    (_a = options.onError) === null || _a === void 0 ? void 0 : _a.call(options, event.error);
-                }
-            });
+            const result = await sdkRef.current.files.upload(file, getSignedUrl, options);
+            return result;
+        }
+        catch (error) {
+            throw error;
+        }
+    }, []);
+    const uploadMultipart = useCallback(async (getSignedUrl, file, options = {}) => {
+        try {
+            const result = await sdkRef.current.files.uploadMultipart(file, getSignedUrl, options);
             return result;
         }
         catch (error) {
@@ -27,40 +25,115 @@ function useApexxCloud() {
     }, []);
     return {
         upload,
+        uploadMultipart,
     };
 }
 
-const FileUploader = ({ getSignedUrl, onUploadComplete, onUploadError, onUploadProgress, }) => {
-    const { upload } = useApexxCloud();
+var styles = {"container":"FileUploader-module_container__SnM6i","dropzone":"FileUploader-module_dropzone__0gzjg","dropzoneActive":"FileUploader-module_dropzoneActive__uDrdn","dropzoneInactive":"FileUploader-module_dropzoneInactive__gtwy7","uploadProgress":"FileUploader-module_uploadProgress__Ty9oG","progressBar":"FileUploader-module_progressBar__tMYO1","progressFill":"FileUploader-module_progressFill__eg7jm","uploadContent":"FileUploader-module_uploadContent__ji3NP","iconContainer":"FileUploader-module_iconContainer__klW7K","icon":"FileUploader-module_icon__eVJBw","errorContainer":"FileUploader-module_errorContainer__um5Cq","errorText":"FileUploader-module_errorText__Wu1Jb"};
+
+const FileUploader = ({ getSignedUrl, onUploadComplete, onUploadError, multipart = false, accept, maxSize, className, }) => {
+    const { upload, uploadMultipart } = useApexxCloud();
     const [progress, setProgress] = useState(0);
-    const handleFileChange = useCallback(async (event) => {
-        var _a;
-        const file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
-        if (!file)
-            return;
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState(null);
+    const abortControllerRef = useRef(null);
+    const handleProgress = useCallback((event) => {
+        setProgress(event.progress);
+    }, []);
+    const handleUpload = useCallback(async (file) => {
+        setError(null);
+        setUploading(true);
+        setProgress(0);
+        abortControllerRef.current = new AbortController();
         try {
-            const signedUrl = await getSignedUrl(file);
-            await upload(signedUrl, file, {
-                onProgress: (progress) => {
-                    setProgress(progress);
-                    onUploadProgress === null || onUploadProgress === void 0 ? void 0 : onUploadProgress(progress);
+            const uploadFn = multipart ? uploadMultipart : upload;
+            const result = await uploadFn(getSignedUrl, file, {
+                onProgress: handleProgress,
+                onComplete: (event) => {
+                    setProgress(100);
+                    onUploadComplete === null || onUploadComplete === void 0 ? void 0 : onUploadComplete(event.response);
                 },
-                onComplete: (response) => {
-                    onUploadComplete === null || onUploadComplete === void 0 ? void 0 : onUploadComplete(response);
+                onError: (event) => {
+                    setError(event.error.message);
+                    onUploadError === null || onUploadError === void 0 ? void 0 : onUploadError(event.error);
                 },
-                onError: (error) => {
-                    onUploadError === null || onUploadError === void 0 ? void 0 : onUploadError(error);
-                },
+                signal: abortControllerRef.current.signal,
+                ...(multipart && {
+                    partSize: 5 * 1024 * 1024, // 5MB chunks
+                    concurrency: 3,
+                }),
             });
+            return result;
         }
         catch (error) {
-            console.error("Upload failed:", error);
-            onUploadError === null || onUploadError === void 0 ? void 0 : onUploadError(error);
+            if (error instanceof Error) {
+                setError(error.message);
+                onUploadError === null || onUploadError === void 0 ? void 0 : onUploadError(error);
+            }
         }
-    }, [getSignedUrl, onUploadComplete, onUploadError, onUploadProgress, upload]);
-    return (React.createElement("div", null,
-        React.createElement("input", { type: "file", onChange: handleFileChange }),
-        progress > 0 && React.createElement("progress", { value: progress, max: "100" })));
+        finally {
+            setUploading(false);
+        }
+    }, [
+        upload,
+        uploadMultipart,
+        getSignedUrl,
+        multipart,
+        onUploadComplete,
+        onUploadError,
+    ]);
+    const handleCancel = useCallback(() => {
+        var _a;
+        (_a = abortControllerRef.current) === null || _a === void 0 ? void 0 : _a.abort();
+        setUploading(false);
+        setProgress(0);
+    }, []);
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop: useCallback((acceptedFiles) => {
+            const file = acceptedFiles[0];
+            if (file)
+                handleUpload(file);
+        }, [handleUpload]),
+        accept,
+        maxSize,
+        multiple: false,
+        disabled: uploading,
+    });
+    const acceptedFileTypes = accept
+        ? Object.keys(accept).join(", ")
+        : "All files";
+    const maxSizeFormatted = maxSize
+        ? `${(maxSize / (1024 * 1024)).toFixed(2)}MB`
+        : "Unlimited";
+    return (React.createElement("div", { className: clsx(styles.container, className) },
+        React.createElement("div", { ...getRootProps(), className: clsx(styles.dropzone, isDragActive ? styles.dropzoneActive : styles.dropzoneInactive, uploading
+                ? "apexx-cursor-default"
+                : "apexx-cursor-pointer hover:apexx-border-gray-400") },
+            React.createElement("input", { ...getInputProps() }),
+            uploading ? (React.createElement("div", { className: "space-y-4" },
+                React.createElement("div", { className: "relative w-full h-2 bg-gray-200 rounded-full overflow-hidden" },
+                    React.createElement("div", { className: "absolute top-0 left-0 h-full bg-blue-500 transition-all duration-300", style: { width: `${progress}%` } })),
+                React.createElement("div", { className: "flex items-center justify-between text-sm text-gray-600" },
+                    React.createElement("span", null,
+                        progress.toFixed(0),
+                        "% complete"),
+                    React.createElement("button", { onClick: (e) => {
+                            e.stopPropagation();
+                            handleCancel();
+                        }, className: "px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors duration-200" }, "Cancel")))) : (React.createElement("div", { className: "text-center space-y-4" },
+                React.createElement("div", { className: "flex justify-center" },
+                    React.createElement("svg", { className: clsx("w-12 h-12 transition-colors duration-200", isDragActive ? "text-blue-500" : "text-gray-400"), fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+                        React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" }))),
+                React.createElement("div", { className: "space-y-1" },
+                    React.createElement("p", { className: "text-base font-medium text-gray-700" }, isDragActive
+                        ? "Drop your file here"
+                        : "Drag & drop your file or click to browse"),
+                    React.createElement("p", { className: "text-sm text-gray-500" },
+                        acceptedFileTypes,
+                        " up to ",
+                        maxSizeFormatted)))),
+            error && (React.createElement("div", { className: "mt-4 p-3 bg-red-50 rounded-md" },
+                React.createElement("p", { className: "text-sm text-red-600" }, error))))));
 };
 
 export { FileUploader, useApexxCloud };
