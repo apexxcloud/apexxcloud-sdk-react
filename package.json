@@ -21,7 +21,7 @@
     "react-dom": "^19.0.0"
   },
   "dependencies": {
-    "@apexxcloud/sdk-js": "^1.0.6",
+    "@apexxcloud/sdk-js": "^1.0.18",
     "clsx": "^2.1.1",
     "react-dropzone": "^14.3.5"
   },
