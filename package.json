@@ -1,6 +1,6 @@
 {
   "name": "@apexxcloud/react",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "React components for ApexxCloud Storage Service",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
