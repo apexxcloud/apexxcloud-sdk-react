@@ -2,6 +2,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import postcss from "rollup-plugin-postcss";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 export default {
   input: "src/index.ts",
@@ -32,10 +34,15 @@ export default {
       config: {
         path: "./postcss.config.js",
       },
+      plugins: [tailwindcss("./tailwind.config.js"), autoprefixer()],
       modules: true,
       extensions: [".css"],
       minimize: true,
       extract: "styles.css",
+      autoModules: true,
+      inject: true,
+      use: ["sass"],
+      writeDefinitions: true,
     }),
   ],
 };

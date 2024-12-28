@@ -7,7 +7,6 @@ import {
   MultipartProgressEvent,
 } from "@apexxcloud/sdk-js";
 import clsx from "clsx";
-import styles from "./FileUploader.module.css";
 
 interface FileUploaderProps {
   getSignedUrl: GetSignedUrlFn;
@@ -114,12 +113,16 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     : "Unlimited";
 
   return (
-    <div className={clsx(styles.container, className)}>
+    <div
+      className={clsx("apexx-w-full apexx-max-w-2xl apexx-mx-auto", className)}
+    >
       <div
         {...getRootProps()}
         className={clsx(
-          styles.dropzone,
-          isDragActive ? styles.dropzoneActive : styles.dropzoneInactive,
+          "apexx-p-6 apexx-border-2 apexx-border-dashed apexx-rounded-lg apexx-transition-colors apexx-duration-200",
+          isDragActive
+            ? "apexx-border-blue-500 apexx-bg-blue-50"
+            : "apexx-border-gray-300 apexx-bg-white",
           uploading
             ? "apexx-cursor-default"
             : "apexx-cursor-pointer hover:apexx-border-gray-400"
@@ -128,33 +131,33 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         <input {...getInputProps()} />
 
         {uploading ? (
-          <div className="space-y-4">
-            <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="apexx-space-y-4">
+            <div className="apexx-relative apexx-w-full apexx-h-2 apexx-bg-gray-200 apexx-rounded-full apexx-overflow-hidden">
               <div
-                className="absolute top-0 left-0 h-full bg-blue-500 transition-all duration-300"
+                className="apexx-absolute apexx-top-0 apexx-left-0 apexx-h-full apexx-bg-blue-500 apexx-transition-all apexx-duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="flex items-center justify-between text-sm text-gray-600">
+            <div className="apexx-flex apexx-items-center apexx-justify-between apexx-text-sm apexx-text-gray-600">
               <span>{progress.toFixed(0)}% complete</span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCancel();
                 }}
-                className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors duration-200"
+                className="apexx-px-3 apexx-py-1 apexx-text-sm apexx-text-red-600 hover:apexx-text-red-700 hover:apexx-bg-red-50 apexx-rounded-md apexx-transition-colors apexx-duration-200"
               >
                 Cancel
               </button>
             </div>
           </div>
         ) : (
-          <div className="text-center space-y-4">
-            <div className="flex justify-center">
+          <div className="apexx-text-center apexx-space-y-4">
+            <div className="apexx-flex apexx-justify-center">
               <svg
                 className={clsx(
-                  "w-12 h-12 transition-colors duration-200",
-                  isDragActive ? "text-blue-500" : "text-gray-400"
+                  "apexx-w-12 apexx-h-12 apexx-transition-colors apexx-duration-200",
+                  isDragActive ? "apexx-text-blue-500" : "apexx-text-gray-400"
                 )}
                 fill="none"
                 stroke="currentColor"
@@ -168,13 +171,13 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 />
               </svg>
             </div>
-            <div className="space-y-1">
-              <p className="text-base font-medium text-gray-700">
+            <div className="apexx-space-y-1">
+              <p className="apexx-text-base apexx-font-medium apexx-text-gray-700">
                 {isDragActive
                   ? "Drop your file here"
                   : "Drag & drop your file or click to browse"}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="apexx-text-sm apexx-text-gray-500">
                 {acceptedFileTypes} up to {maxSizeFormatted}
               </p>
             </div>
@@ -182,8 +185,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         )}
 
         {error && (
-          <div className="mt-4 p-3 bg-red-50 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="apexx-mt-4 apexx-p-3 apexx-bg-red-50 apexx-rounded-md">
+            <p className="apexx-text-sm apexx-text-red-600">{error}</p>
           </div>
         )}
       </div>
