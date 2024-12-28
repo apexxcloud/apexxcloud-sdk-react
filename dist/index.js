@@ -136,12 +136,6 @@ const FileUploader = ({ getSignedUrl, onUploadComplete, onUploadError, multipart
         maxSize: maxSize ? maxSize * 1024 * 1024 : undefined,
         multiple: false,
         disabled: uploading,
-        getFilesFromEvent: async (event) => {
-            const files = (await event.dataTransfer)
-                ? event.dataTransfer.files
-                : event.target.files;
-            return files;
-        },
     });
     const acceptedFileTypes = accept
         ? Object.values(accept).flat().join(", ")
