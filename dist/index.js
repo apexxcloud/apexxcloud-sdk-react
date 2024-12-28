@@ -136,6 +136,12 @@ const FileUploader = ({ getSignedUrl, onUploadComplete, onUploadError, multipart
         maxSize: maxSize ? maxSize * 1024 * 1024 : undefined,
         multiple: false,
         disabled: uploading,
+        getFilesFromEvent: async (event) => {
+            const files = (await event.dataTransfer)
+                ? event.dataTransfer.files
+                : event.target.files;
+            return files;
+        },
     });
     const acceptedFileTypes = accept
         ? Object.values(accept).flat().join(", ")
@@ -168,7 +174,11 @@ const FileUploader = ({ getSignedUrl, onUploadComplete, onUploadError, multipart
                     React__default["default"].createElement("br", null),
                     "Max size: ",
                     maxSizeFormatted))),
-            fileRejections.length > 0 && (React__default["default"].createElement("div", { className: "apexx-uploader-error" }, fileRejections[0].errors.map((err) => err.message).join(", "))),
+            fileRejections.length > 0 && (React__default["default"].createElement("div", { className: "apexx-uploader-error" }, fileRejections[0].errors
+                .map((err) => err.code === "file-too-large"
+                ? `File is too large. Maximum size is ${maxSize}MB`
+                : err.message)
+                .join(", "))),
             error && React__default["default"].createElement("div", { className: "apexx-uploader-error" }, error))));
 };
 

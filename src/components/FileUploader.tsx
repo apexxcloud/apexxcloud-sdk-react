@@ -103,12 +103,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       maxSize: maxSize ? maxSize * 1024 * 1024 : undefined,
       multiple: false,
       disabled: uploading,
-      getFilesFromEvent: async (event) => {
-        const files = (await (event as any).dataTransfer)
-          ? (event as any).dataTransfer.files
-          : (event as any).target.files;
-        return files;
-      },
     });
 
   const acceptedFileTypes = accept
