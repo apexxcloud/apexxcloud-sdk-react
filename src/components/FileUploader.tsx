@@ -103,6 +103,12 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       maxSize: maxSize ? maxSize * 1024 * 1024 : undefined,
       multiple: false,
       disabled: uploading,
+      getFilesFromEvent: async (event) => {
+        const files = (await (event as any).dataTransfer)
+          ? (event as any).dataTransfer.files
+          : (event as any).target.files;
+        return files;
+      },
     });
 
   const acceptedFileTypes = accept
@@ -175,7 +181,13 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
         {fileRejections.length > 0 && (
           <div className="apexx-uploader-error">
-            {fileRejections[0].errors.map((err) => err.message).join(", ")}
+            {fileRejections[0].errors
+              .map((err) =>
+                err.code === "file-too-large"
+                  ? `File is too large. Maximum size is ${maxSize}MB`
+                  : err.message
+              )
+              .join(", ")}
           </div>
         )}
 

@@ -123,16 +123,14 @@ const FileUploader = ({ getSignedUrl, onUploadComplete, onUploadError, multipart
                 handleUpload(file);
         }, [handleUpload]),
         accept,
-        maxSize,
+        maxSize: maxSize ? maxSize * 1024 * 1024 : undefined,
         multiple: false,
         disabled: uploading,
     });
     const acceptedFileTypes = accept
         ? Object.values(accept).flat().join(", ")
         : "All files";
-    const maxSizeFormatted = maxSize
-        ? `${(maxSize / (1024 * 1024)).toFixed(2)}MB`
-        : "Unlimited";
+    const maxSizeFormatted = maxSize ? `${maxSize}MB` : "Unlimited";
     return (React.createElement("div", { className: clsx("apexx-uploader-container") },
         React.createElement("div", { ...getRootProps(), className: clsx("apexx-uploader-dropzone", isDragActive && "active", uploading && "disabled") },
             React.createElement("input", { ...getInputProps() }),
