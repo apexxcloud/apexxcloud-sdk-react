@@ -26,11 +26,19 @@ export default {
   ],
   plugins: [
     css({
-      output: "styles.css",
-      include: ["**/*.css"],
+      output: function (styles) {
+        require("fs").writeFileSync("dist/styles.css", styles);
+      },
     }),
-    resolve(),
+    typescript({
+      tsconfig: "./tsconfig.json",
+      declaration: true,
+      declarationDir: "dist",
+      include: ["src/**/*.{ts,tsx}"],
+    }),
+    resolve({
+      extensions: [".ts", ".tsx", ".css"],
+    }),
     commonjs(),
-    typescript(),
   ],
 };
