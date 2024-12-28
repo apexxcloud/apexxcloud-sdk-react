@@ -81,3 +81,15 @@
   background: #fef2f2;
   color: #b91c1c;
 }
+
+.apexx-uploader-limits {
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.apexx-uploader-error {
+  color: #dc2626;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}

@@ -16,7 +16,6 @@ interface FileUploaderProps {
   multipart?: boolean;
   accept?: Record<string, string[]>;
   maxSize?: number;
-  className?: string;
 }
 
 export const FileUploader: React.FC<FileUploaderProps> = ({
@@ -26,7 +25,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   multipart = false,
   accept,
   maxSize,
-  className,
 }) => {
   const { upload, uploadMultipart } = useApexxCloud();
   const [progress, setProgress] = useState(0);
@@ -92,29 +90,30 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     setProgress(0);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: useCallback(
-      (acceptedFiles: File[]) => {
-        const file = acceptedFiles[0];
-        if (file) handleUpload(file);
-      },
-      [handleUpload]
-    ),
-    accept,
-    maxSize,
-    multiple: false,
-    disabled: uploading,
-  });
+  const { getRootProps, getInputProps, isDragActive, fileRejections } =
+    useDropzone({
+      onDrop: useCallback(
+        (acceptedFiles: File[]) => {
+          const file = acceptedFiles[0];
+          if (file) handleUpload(file);
+        },
+        [handleUpload]
+      ),
+      accept,
+      maxSize,
+      multiple: false,
+      disabled: uploading,
+    });
 
   const acceptedFileTypes = accept
-    ? Object.keys(accept).join(", ")
+    ? Object.values(accept).flat().join(", ")
     : "All files";
   const maxSizeFormatted = maxSize
     ? `${(maxSize / (1024 * 1024)).toFixed(2)}MB`
     : "Unlimited";
 
   return (
-    <div className={clsx("apexx-uploader-container", className)}>
+    <div className={clsx("apexx-uploader-container")}>
       <div
         {...getRootProps()}
         className={clsx(
@@ -168,6 +167,17 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               />
             </svg>
             <p>Drop files here or click to upload</p>
+            <small className="apexx-uploader-limits">
+              Accepted: {acceptedFileTypes}
+              <br />
+              Max size: {maxSizeFormatted}
+            </small>
+          </div>
+        )}
+
+        {fileRejections.length > 0 && (
+          <div className="apexx-uploader-error">
+            {fileRejections[0].errors.map((err) => err.message).join(", ")}
           </div>
         )}
 
