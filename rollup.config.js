@@ -2,6 +2,14 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import css from "rollup-plugin-css-only";
+import fs from "fs";
+import path from "path";
+
+// Ensure dist directory exists
+const distDir = path.join(process.cwd(), "dist");
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir, { recursive: true });
+}
 
 export default {
   input: "src/index.ts",
@@ -27,7 +35,7 @@ export default {
   plugins: [
     css({
       output: function (styles) {
-        require("fs").writeFileSync("dist/styles.css", styles);
+        fs.writeFileSync(path.join(distDir, "styles.css"), styles);
       },
     }),
     typescript({
