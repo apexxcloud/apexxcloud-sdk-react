@@ -1,7 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
-import postcss from "rollup-plugin-postcss";
+import css from "rollup-plugin-css-only";
 
 export default {
   input: "src/index.ts",
@@ -25,14 +25,12 @@ export default {
     "clsx",
   ],
   plugins: [
+    css({
+      output: "styles.css",
+      include: ["**/*.css"],
+    }),
     resolve(),
     commonjs(),
     typescript(),
-    postcss({
-      extensions: [".css"],
-      minimize: true,
-      extract: "styles.css",
-      inject: true,
-    }),
   ],
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import { GetSignedUrlFn } from "@apexxcloud/sdk-js";
+import "./FileUploader.css";
 interface FileUploaderProps {
     getSignedUrl: GetSignedUrlFn;
     onUploadComplete?: (response: any) => void;
