@@ -100,7 +100,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         [handleUpload]
       ),
       accept,
-      maxSize,
+      maxSize: maxSize ? maxSize * 1024 * 1024 : undefined,
       multiple: false,
       disabled: uploading,
     });
@@ -108,9 +108,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   const acceptedFileTypes = accept
     ? Object.values(accept).flat().join(", ")
     : "All files";
-  const maxSizeFormatted = maxSize
-    ? `${(maxSize / (1024 * 1024)).toFixed(2)}MB`
-    : "Unlimited";
+  const maxSizeFormatted = maxSize ? `${maxSize}MB` : "Unlimited";
 
   return (
     <div className={clsx("apexx-uploader-container")}>
